@@ -1,5 +1,6 @@
 import "dart:typed_data";
 
+import "package:ext/ext.dart";
 import "package:flutter/foundation.dart";
 import "package:sqlite/sqlite.dart";
 
@@ -14,12 +15,9 @@ import "sqlite_type.dart";
 
 T _identity<T>(T e) => e;
 
-T _nul<T>() => null;
-
 class Table implements Selectable {
   Table(String name)
-      : assert(
-            name != null && name.isNotEmpty, "Table name is not null or empty"),
+      : assert(name.isNotEmpty, "Table name cannot be empty"),
         _tableName = name;
 
   final String _tableName;
@@ -27,22 +25,22 @@ class Table implements Selectable {
   final List<Column<void>> _columns = [];
 
   @protected
-  Column<int> long(String name) => _register(name, SqliteType.integer);
+  Column<int?> long(String name) => _register(name, SqliteType.integer);
 
   @protected
-  Column<double> real(String name) => _register(name, SqliteType.real);
+  Column<double?> real(String name) => _register(name, SqliteType.real);
 
   @protected
-  Column<String> text(String name) => _register(name, SqliteType.text);
+  Column<String?> text(String name) => _register(name, SqliteType.text);
 
   @protected
-  Column<DateTime> date(String name) => _register(name, SqliteType.integer);
+  Column<DateTime?> date(String name) => _register(name, SqliteType.integer);
 
   @protected
-  Column<bool> boolean(String name) => _register(name, SqliteType.integer);
+  Column<bool?> boolean(String name) => _register(name, SqliteType.integer);
 
   @protected
-  Column<Uint8List> blob(String name) => _register(name, SqliteType.blob);
+  Column<Uint8List?> blob(String name) => _register(name, SqliteType.blob);
 
   Column<T> _register<T>(String name, SqliteType type) {
     final column = Column<T>(name, this, type);
@@ -55,7 +53,7 @@ class Table implements Selectable {
       _columns.map<Expressible>(_identity).toList(growable: false);
 
   @override
-  List<Object> args() => const [];
+  List<Object?> args() => const [];
 
   @override
   String clause(Context context) {
@@ -134,18 +132,18 @@ class Table implements Selectable {
     final internalForeignKeys = <_InternalForeignKey>[];
 
     for (final col in foreignColumn) {
-      final name = col.foreignKey.otherTableName;
+      final name = col.foreignKey!.otherTableName;
       var key = internalForeignKeys
-          .firstWhere((x) => x.foreignTable._tableName == name, orElse: _nul);
+          .firstOrNull((x) => x.foreignTable._tableName == name);
       if (key == null) {
-        final foreignTable = col.foreignKey.otherTable;
+        final foreignTable = col.foreignKey!.otherTable;
         key = _InternalForeignKey(foreignTable);
         key.thisKeys.add(col);
-        key.foreignKeys.add(col.foreignKey.otherColumn);
+        key.foreignKeys.add(col.foreignKey!.otherColumn);
         internalForeignKeys.add(key);
       } else {
         key.thisKeys.add(col);
-        key.foreignKeys.add(col.foreignKey.otherColumn);
+        key.foreignKeys.add(col.foreignKey!.otherColumn);
       }
     }
     return internalForeignKeys;
@@ -165,7 +163,7 @@ class InsertNullValueException extends StateError {
 }
 
 extension SqlOperatorOnTable<T extends Table> on T {
-  int insert(Database db, List<Setter<Object>> Function(T table) setters) {
+  int insert(Database db, List<Setter<Object?>> Function(T table) setters) {
     final columns = setters(this);
     final nonnullColumns = _columns.where((x) => x.isNonnull).toList();
 
@@ -181,11 +179,8 @@ extension SqlOperatorOnTable<T extends Table> on T {
     final statement =
         "INSERT INTO $_tableName ($columnStatement) VALUES($valuesStatement)";
 
-    final args = <Object>[];
+    final args = <Object?>[];
     for (final e in columns) {
-      if (e.column.isNonnull && e.value == null) {
-        throw InsertNullValueException(e.column);
-      }
       args.addAll(LiteralExpression(e.value).args());
     }
     assert(() {

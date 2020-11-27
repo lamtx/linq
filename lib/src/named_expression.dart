@@ -3,21 +3,21 @@ import "expression.dart";
 import "named_expressible.dart";
 
 abstract class NamedExpression<T> implements Expression<T>, NamedExpressible {
-    factory NamedExpression(String name, [Expression<T> base]) {
+    factory NamedExpression(String name, [Expression<T>? base]) {
         return _NamedExpressionImpl(name, base);
     }
 }
 
 class _NamedExpressionImpl<T> implements NamedExpression<T> {
-    _NamedExpressionImpl(this.name, [Expression<T> base]) : _base = base;
+    _NamedExpressionImpl(this.name, [Expression<T>? base]) : _base = base;
 
-    final Expression<T> _base;
+    final Expression<T>? _base;
 
     @override
     final String name;
 
     @override
-    List<Object> args() {
+    List<Object?> args() {
         return _base?.args() ?? const [];
     }
 
@@ -26,7 +26,7 @@ class _NamedExpressionImpl<T> implements NamedExpression<T> {
         if (_base == null) {
             return name;
         }
-        return "${_base.clause(context)} as $name";
+        return "${_base!.clause(context)} as $name";
     }
 }
 

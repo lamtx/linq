@@ -59,13 +59,13 @@ class _Filterable<T extends Expressible> implements Filterable<T> {
   }
 
   @override
-  List<Object> args() {
+  List<Object?> args() {
     return [for (final exp in whereClauses) ...exp.args()];
   }
 }
 
 extension SqlOperatorOnFilterable<T extends Expressible> on Filterable<T> {
-  void update(Database database, List<Setter<Object>> Function(T) setters) =>
+  void update(Database database, List<Setter<Object?>> Function(T) setters) =>
       SqlContext.update(this, database, setters);
 
   void delete(Database database) => SqlContext.delete(this, database);

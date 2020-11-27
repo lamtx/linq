@@ -1,16 +1,17 @@
+import "package:ext/ext.dart";
+
 import "binary_expression.dart";
 import "context.dart";
 import "expressible.dart";
 import "literal.dart";
 import "literal_expression.dart";
-import 'misc.dart';
 
 abstract class Expression<T> implements Expressible {}
 
 extension ExpressionOperator<T> on Expression<T> {
-  Expression<bool> eq(T value) => _binary(BinaryOperator.equal, value);
+  Expression<bool> eq(T? value) => _binary(BinaryOperator.equal, value);
 
-  Expression<bool> ne(T value) => _binary(BinaryOperator.notEqual, value);
+  Expression<bool> ne(T? value) => _binary(BinaryOperator.notEqual, value);
 
   Expression<bool> lt(T value) => _binary(BinaryOperator.lessThan, value);
 
@@ -32,7 +33,7 @@ extension ExpressionOperator<T> on Expression<T> {
   Expression<R> postfix<R>(String functionName) =>
       _PostfixExpression(functionName, this);
 
-  Expression<R> func<R>(String functionName, [Object args]) =>
+  Expression<R> func<R>(String functionName, [Object? args]) =>
       _FunctionExpression(
         functionName,
         [this, if (args != null) LiteralExpression(args)],
@@ -46,15 +47,14 @@ extension ExpressionOperator<T> on Expression<T> {
 
   Expression<T> min() => func<T>("min");
 
-  Expression<bool> _binary(BinaryOperator op, T value) =>
+  Expression<bool> _binary(BinaryOperator op, T? value) =>
       BinaryExpression(op, this, LiteralExpression(value));
 
-  Expression<bool> _binaryEx(BinaryOperator op, Expression<T> other) =>
+  Expression<bool> _binaryEx(BinaryOperator op, Expression<T?> other) =>
       BinaryExpression(op, this, other);
 }
 
 extension BoolExpressionOperator on Expression<bool> {
-  // ignore: avoid_positional_boolean_parameters
   Expression<bool> or(bool value) {
     if (value) {
       return LiteralExpression(true);
@@ -67,14 +67,14 @@ extension BoolExpressionOperator on Expression<bool> {
   }
 }
 
-extension StringExpressionOperator on Expression<String> {
-  Expression<bool> contains(String value) => BinaryExpression(
+extension StringExpressionOperator on Expression<String?> {
+  Expression<bool> contains(String? value) => BinaryExpression(
       BinaryOperator.like, this, _ContainExpression(LiteralExpression(value)));
 
-  Expression<bool> endsWith(String value) => BinaryExpression(
+  Expression<bool> endsWith(String? value) => BinaryExpression(
       BinaryOperator.like, this, _EndsWithExpression(LiteralExpression(value)));
 
-  Expression<bool> startsWith(String value) => BinaryExpression(
+  Expression<bool> startsWith(String? value) => BinaryExpression(
       BinaryOperator.like,
       this,
       _StartsWithExpression(LiteralExpression(value)));
@@ -87,28 +87,27 @@ class _PostfixExpression<T> implements Expression<T> {
   _PostfixExpression(this.functionName, this.arg);
 
   final String functionName;
-  final Expression<Object> arg;
+  final Expression<Object?> arg;
 
   @override
-  List<Object> args() => arg.args();
+  List<Object?> args() => arg.args();
 
   @override
   String clause(Context context) => "${arg.clause(context)} $functionName";
 }
 
 class _FunctionExpression<T> implements Expression<T> {
-  _FunctionExpression(this.func, this.arg)
-      : assert(arg != null && arg.isNotEmpty);
+  _FunctionExpression(this.func, this.arg) : assert(arg.isNotEmpty);
 
   final String func;
-  final List<Expression<Object>> arg;
+  final List<Expression<Object?>> arg;
 
   @override
-  List<Object> args() {
+  List<Object?> args() {
     if (arg.length == 1) {
       return arg.first.args();
     }
-    final list = <Object>[];
+    final list = <Object?>[];
     for (final e in arg) {
       list.addAll(e.args());
     }
@@ -127,10 +126,10 @@ class _FunctionExpression<T> implements Expression<T> {
 class _ContainExpression implements Expression<bool> {
   _ContainExpression(this.arg);
 
-  final Expression<String> arg;
+  final Expression<String?> arg;
 
   @override
-  List<Object> args() => arg.args();
+  List<Object?> args() => arg.args();
 
   @override
   String clause(Context context) {
@@ -141,10 +140,10 @@ class _ContainExpression implements Expression<bool> {
 class _EndsWithExpression implements Expression<bool> {
   _EndsWithExpression(this.arg);
 
-  final Expression<String> arg;
+  final Expression<String?> arg;
 
   @override
-  List<Object> args() => arg.args();
+  List<Object?> args() => arg.args();
 
   @override
   String clause(Context context) {
@@ -155,10 +154,10 @@ class _EndsWithExpression implements Expression<bool> {
 class _StartsWithExpression implements Expression<bool> {
   _StartsWithExpression(this.arg);
 
-  final Expression<String> arg;
+  final Expression<String?> arg;
 
   @override
-  List<Object> args() => arg.args();
+  List<Object?> args() => arg.args();
 
   @override
   String clause(Context context) {
@@ -169,10 +168,10 @@ class _StartsWithExpression implements Expression<bool> {
 class _CollectionExpression implements Expressible {
   _CollectionExpression(this.items);
 
-  final List<Object> items;
+  final List<Object?> items;
 
   @override
-  List<Object> args() {
+  List<Object?> args() {
     return items.map(toSQLiteLiteral).toList();
   }
 

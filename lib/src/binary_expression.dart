@@ -31,7 +31,7 @@ class BinaryExpression<T> implements Expression<T> {
     final Expressible _right;
 
     @override
-    List<Object> args() {
+    List<Object?> args() {
         return [
             ..._left.args(),
             ..._right.args()

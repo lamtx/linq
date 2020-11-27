@@ -11,7 +11,7 @@ class OrderedQueryable<T extends Expressible> implements Queryable<T> {
   final List<Expressible> _orderBy;
 
   @override
-  List<Object> args() => _base.args();
+  List<Object?> args() => _base.args();
 
   @override
   String clause(Context context) {

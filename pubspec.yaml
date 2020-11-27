@@ -3,18 +3,17 @@ description: LinQ
 version: 1.0.0
 
 environment:
-  sdk: '>=2.6.0 <3.0.0'
-  # The example interacts with build scripts on the Flutter side that are not
-  # yet stable, so it requires a very recent version of Flutter.
-  # This version will increase regularly as the build scripts change.
-  flutter: '>=1.5.9-pre.270'
+  sdk: ^2.12.0-0
 
 dependencies:
   flutter:
     sdk: flutter
   sqlite:
-    git: https://github.com/lamtx/sqlite.git
-  meta: ^1.1.7
+    #    git: https://github.com/lamtx/sqlite.git
+    path: ../sqlite
+  ext:
+    #    git: https://github.com/lamtx/ext.git
+    path: ../ext
 
 dev_dependencies:
   flutter_test:

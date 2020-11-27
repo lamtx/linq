@@ -10,26 +10,26 @@ class Group<TSource extends Expressible, TKey> implements Expressible {
   final TKey key;
 
   @override
-  List<Object> args() => source.args();
+  List<Object?> args() => source.args();
 
   @override
   String clause(Context context) => source.clause(context);
 }
 
-class GroupQueryable<T extends Expressible, TKey>
+class GroupQueryable<T extends Expressible, TKey extends Object>
     implements Queryable<Group<T, TKey>> {
   GroupQueryable(Queryable<T> base, TKey key)
       : _base = base,
-        _key = key {
-    _groupByClauses = collectExpressible(key);
-  }
+        _key = key ,
+        _groupByClauses = collectExpressible(key);
+
 
   final Queryable<T> _base;
   final TKey _key;
   List<Expressible> _groupByClauses;
 
   @override
-  List<Object> args() => _base.args();
+  List<Object?> args() => _base.args();
 
   @override
   String clause(Context context) {

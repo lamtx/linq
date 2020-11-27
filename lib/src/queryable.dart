@@ -17,7 +17,8 @@ extension QueryableSelector<T extends Expressible> on Queryable<T> {
         query: this,
       );
 
-  Collectible<R> select<R>(R Function(T) selector) => Collectible(
+  Collectible<R> select<R extends Object>(R Function(T) selector) =>
+      Collectible(
         source: selector(source),
         baseSource: source,
         distinct: false,
@@ -48,7 +49,8 @@ extension QueryableSelector<T extends Expressible> on Queryable<T> {
         selections: selector(source),
       );
 
-  Collectible<R> selectDistinct<R>(R Function(T) selector) => Collectible(
+  Collectible<R> selectDistinct<R extends Object>(R Function(T) selector) =>
+      Collectible(
         source: selector(source),
         baseSource: source,
         distinct: true,
@@ -58,7 +60,8 @@ extension QueryableSelector<T extends Expressible> on Queryable<T> {
   LimitedQueryable<T> limit(int limit, int offset) =>
       LimitedQueryable(this, limit, offset);
 
-  GroupQueryable<T, TKey> groupBy<TKey>(TKey Function(T) selector) =>
+  GroupQueryable<T, TKey> groupBy<TKey extends Object>(
+          TKey Function(T) selector) =>
       GroupQueryable(this, selector(source));
 
   OrderedQueryable<T> orderBy(List<Expressible> Function(T) fields) =>

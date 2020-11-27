@@ -1,6 +1,6 @@
+import 'package:ext/ext.dart';
 import "package:sqlite/sqlite.dart";
 
-import "column.dart";
 import "literal.dart";
 import "named_expression.dart";
 
@@ -13,10 +13,10 @@ class CollectorImpl<T> implements Collector<T> {
 
   final T _source;
 
-  Row _current;
+  Row? _current;
   var _index = 0;
   var _prepared = false;
-  final _cache = <_Column<Object>>[];
+  final _cache = <_Column<Object?>>[];
 
   void allSet() {
     _current = null;
@@ -33,24 +33,22 @@ class CollectorImpl<T> implements Collector<T> {
   R get<R>(NamedExpression<R> Function(T) fieldName) {
     final namedColumn = fieldName(_source);
     final field = namedColumn.name;
+    final current = _current ?? error("set must be called before get");
+
     if (_prepared) {
       final column = _cache[_index];
       _index += 1;
       assert(column.name == field, "Column mismatch");
-      return (column.objectFactory(_current, column.index) ??
-          _defaultValueOf(namedColumn)) as R;
+      return column.objectFactory(current, column.index) as R;
     }
-    final columnIndex = _current.getColumnIndex(field);
+
+    final columnIndex = current.getColumnIndex(field) ??
+        error(
+          "Index out of bound. It usually happens when the number of field reading for each time are different",
+        );
     final factory = findObjectFactory<R>();
     _cache.add(_Column(columnIndex, field, factory));
-    return factory(_current, columnIndex) ?? _defaultValueOf(namedColumn);
-  }
-
-  static R _defaultValueOf<R>(NamedExpression<R> column) {
-    if (column is Column<R>) {
-      return column.defaultValue;
-    }
-    return null;
+    return factory(current, columnIndex);
   }
 }
 
@@ -59,5 +57,5 @@ class _Column<T> {
 
   final int index;
   final String name;
-  final ObjectFactory<Object> objectFactory;
+  final ObjectFactory<T> objectFactory;
 }

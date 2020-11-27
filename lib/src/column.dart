@@ -10,9 +10,7 @@ import "table.dart";
 
 class Column<T> implements NamedExpression<T> {
   Column(this.name, this.owner, SqliteType sqliteType)
-      : assert(name != null && name.isNotEmpty, "Name is null or empty"),
-        assert(owner != null),
-        assert(sqliteType != null),
+      : assert(name.isNotEmpty, "Name cannot be null"),
         _sqliteType = sqliteType;
 
   @override
@@ -22,26 +20,14 @@ class Column<T> implements NamedExpression<T> {
 
   var _isPrimary = false;
   var _isNonnull = false;
-  T _defaultValue;
-  ForeignKey<T> _foreignKey;
+  T? _defaultValue;
+  ForeignKey<T>? _foreignKey;
 
   bool get isPrimary => _isPrimary;
 
-  T get defaultValue => _defaultValue;
-
-  ForeignKey<T> get foreignKey => _foreignKey;
+  ForeignKey<T>? get foreignKey => _foreignKey;
 
   bool get isNonnull => _isNonnull;
-
-  Column<T> primary() {
-    _isPrimary = true;
-    return this;
-  }
-
-  Column<T> nonnull() {
-    _isNonnull = true;
-    return this;
-  }
 
   Column<T> references(Column<T> other) {
     _foreignKey = ForeignKey(other.owner, other);
@@ -66,7 +52,7 @@ class Column<T> implements NamedExpression<T> {
   }
 
   @override
-  List<Object> args() => const [];
+  List<Object?> args() => const [];
 
   @override
   String clause(Context context) {
@@ -89,4 +75,19 @@ extension SqlOperatorOnColumn<T extends Column<Object>> on T {
     }());
     db.execute(statement);
   }
+}
+
+extension ColumnExt<T extends Object> on Column<T?> {
+  Column<T> primary() {
+    _isPrimary = true;
+    // TODO: fault
+    return this as Column<T>;
+  }
+
+  Column<T> nonnull() {
+    _isNonnull = true;
+    // TODO: fault
+    return this as Column<T>;
+  }
+
 }

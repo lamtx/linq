@@ -19,7 +19,7 @@ class LimitedQueryable<T extends Expressible> implements Queryable<T> {
     }
 
     @override
-    List<Object> args() => _base.args();
+    List<Object?> args() => _base.args();
 
     @override
     T get source => _base.source;

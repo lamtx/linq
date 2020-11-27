@@ -28,7 +28,7 @@ class SqlContext implements Context {
   Filterable<T> query<T extends Selectable>(T source) => from(source);
 
   @override
-  String alias(Selectable source) {
+  String? alias(Selectable source) {
     final index = _mapping.indexWhere((e) => e == source);
     if (index == -1) {
       return null;
@@ -66,7 +66,7 @@ class SqlContext implements Context {
     return list;
   }
 
-  R _firstOrNull<T, R>(
+  R? _firstOrNull<T, R>(
       Result result, T source, R Function(Collector<T>) creator) {
     try {
       if (result.moveNext()) {
@@ -89,14 +89,14 @@ class SqlContext implements Context {
   }
 
   @implement
-  List<R> collect<T, R>(
+  List<R> collect<T extends Object, R>(
       Collectible<T> receiver, R Function(Collector<T>) creator) {
     final result = _fetch(receiver, database);
     return _toList(result, receiver.source, creator);
   }
 
   @implement
-  R firstOrNull<T, R>(
+  R? firstOrNull<T extends Object, R>(
       Collectible<T> receiver, R Function(Collector<T>) creator) {
     final result = _fetch(receiver, database);
     return _firstOrNull(result, receiver.source, creator);
@@ -104,7 +104,7 @@ class SqlContext implements Context {
 
   @implement
   static void update<T extends Expressible>(Filterable<T> receiver,
-      Database database, List<Setter<Object>> Function(T) setters) {
+      Database database, List<Setter<Object?>> Function(T) setters) {
     assert(receiver.source is Table);
     final args = receiver.args();
     final tableName = receiver.source.clause(Context.empty);
@@ -113,7 +113,7 @@ class SqlContext implements Context {
       return;
     }
     final whereClause = receiver.clause(Context.empty);
-    final bindArgs = <Object>[];
+    final bindArgs = <Object?>[];
     final statement = StringBuffer()
       ..write("UPDATE ")
       ..write(tableName)

@@ -2,7 +2,7 @@ import "dart:typed_data";
 
 import "package:sqlite/sqlite.dart";
 
-Object toSQLiteLiteral(Object value) {
+Object? toSQLiteLiteral(Object? value) {
   assert(value == null ||
       value is bool ||
       value is num ||
@@ -21,25 +21,24 @@ Object toSQLiteLiteral(Object value) {
 
 typedef ObjectFactory<T> = T Function(Row row, int columnIndex);
 
-String _stringFactory(Row row, int columnIndex) =>
+String? _stringFactory(Row row, int columnIndex) =>
     row.readColumnByIndexAsText(columnIndex);
 
-int _intFactory(Row row, int columnIndex) =>
+int? _intFactory(Row row, int columnIndex) =>
     row.readColumnByIndexAsInt(columnIndex);
 
-double _doubleFactory(Row row, int columnIndex) =>
+double? _doubleFactory(Row row, int columnIndex) =>
     row.readColumnByIndexAsDouble(columnIndex);
 
-bool _boolFactory(Row row, int columnIndex) {
+bool? _boolFactory(Row row, int columnIndex) {
   final value = row.readColumnByIndexAsInt(columnIndex);
   if (value == null) {
-    // ignore: avoid_returning_null
     return null;
   }
   return value != 0;
 }
 
-DateTime _dateFactory(Row row, int columnIndex) {
+DateTime? _dateFactory(Row row, int columnIndex) {
   final value = row.readColumnByIndexAsInt(columnIndex);
   if (value == null) {
     return null;
@@ -47,11 +46,11 @@ DateTime _dateFactory(Row row, int columnIndex) {
   return DateTime.fromMillisecondsSinceEpoch(value);
 }
 
-Uint8List _blobFactory(Row row, int columnIndex) =>
+Uint8List? _blobFactory(Row row, int columnIndex) =>
     row.readColumnByIndexAsBlob(columnIndex);
 
 ObjectFactory<T> findObjectFactory<T>() {
-  ObjectFactory<Object> value;
+  ObjectFactory<Object?> value;
   switch (T) {
     case int:
       value = _intFactory;
@@ -72,8 +71,7 @@ ObjectFactory<T> findObjectFactory<T>() {
       value = _blobFactory;
       break;
     default:
-      throw UnsupportedError("Unsupport type $T to read data from sqlite");
-      break;
+      throw UnsupportedError("Unsupported type $T to read data from sqlite");
   }
 
   return value as ObjectFactory<T>;
