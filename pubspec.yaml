@@ -1,5 +1,6 @@
 name: linq
 description: LinQ
+publish_to: 'none'
 version: 1.0.0
 
 environment:
@@ -9,11 +10,11 @@ dependencies:
   flutter:
     sdk: flutter
   sqlite:
-    #    git: https://github.com/lamtx/sqlite.git
-    path: ../sqlite
+    git: https://github.com/lamtx/sqlite.git
+  #    path: ../sqlite
   ext:
-    #    git: https://github.com/lamtx/ext.git
-    path: ../ext
+    git: https://github.com/lamtx/ext.git
+#    path: ../ext
 
 dev_dependencies:
   flutter_test:
