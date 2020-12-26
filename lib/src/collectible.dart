@@ -28,7 +28,7 @@ extension SqlOperatorOnCollectible<T extends Object> on Collectible<T> {
   List<R> collect<R>(SqlContext context, R Function(Collector<T>) collector) =>
       context.collect(this, collector);
 
-  R? firstOrNull<R>(SqlContext context, R Function(Collector<T>) collector) =>
+  R? firstOrNull<R>(SqlContext context, R? Function(Collector<T>) collector) =>
       context.firstOrNull(this, collector);
 
   R first<R>(SqlContext context, R Function(Collector<T>) collector) =>

@@ -67,7 +67,7 @@ class SqlContext implements Context {
   }
 
   R? _firstOrNull<T, R>(
-      Result result, T source, R Function(Collector<T>) creator) {
+      Result result, T source, R? Function(Collector<T>) creator) {
     try {
       if (result.moveNext()) {
         final collector = CollectorImpl(source)..set(result.current);
@@ -97,7 +97,7 @@ class SqlContext implements Context {
 
   @implement
   R? firstOrNull<T extends Object, R>(
-      Collectible<T> receiver, R Function(Collector<T>) creator) {
+      Collectible<T> receiver, R? Function(Collector<T>) creator) {
     final result = _fetch(receiver, database);
     return _firstOrNull(result, receiver.source, creator);
   }
