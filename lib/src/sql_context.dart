@@ -131,7 +131,7 @@ class SqlContext implements Context {
         ..write(" = ?");
       bindArgs.addAll(LiteralExpression(exp.value).args());
     }
-    statement..write(" WHERE ")..write(whereClause);
+    statement..write(" ")..write(whereClause);
     bindArgs.addAll(args);
 
     assert(() {
@@ -153,7 +153,7 @@ class SqlContext implements Context {
     final whereClause = receiver.clause(Context.empty);
     final statement = whereClause.isEmpty
         ? "DELETE FROM $tableName"
-        : "DELETE FROM $tableName WHERE $whereClause";
+        : "DELETE FROM $tableName $whereClause";
 
     assert(() {
       if (enableLog) {

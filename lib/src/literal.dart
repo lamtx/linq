@@ -1,5 +1,6 @@
 import "dart:typed_data";
 
+import "package:ext/ext.dart";
 import "package:sqlite/sqlite.dart";
 
 Object? toSQLiteLiteral(Object? value) {
@@ -50,28 +51,22 @@ Uint8List? _blobFactory(Row row, int columnIndex) =>
     row.readColumnByIndexAsBlob(columnIndex);
 
 ObjectFactory<T> findObjectFactory<T>() {
-  ObjectFactory<Object?> value;
-  switch (T) {
-    case int:
-      value = _intFactory;
-      break;
-    case String:
-      value = _stringFactory;
-      break;
-    case double:
-      value = _doubleFactory;
-      break;
-    case bool:
-      value = _boolFactory;
-      break;
-    case DateTime:
-      value = _dateFactory;
-      break;
-    case Uint8List:
-      value = _blobFactory;
-      break;
-    default:
-      throw UnsupportedError("Unsupported type $T to read data from sqlite");
+  late final ObjectFactory<Object?> value;
+  final type = typeOf<T>();
+  if (type == typeOf<int>() || type == typeOf<int?>()) {
+    value = _intFactory;
+  } else if (type == typeOf<String>() || type == typeOf<String?>()) {
+    value = _stringFactory;
+  } else if (type == typeOf<double>() || type == typeOf<double?>()) {
+    value = _doubleFactory;
+  } else if (type == typeOf<bool>() || type == typeOf<bool?>()) {
+    value = _boolFactory;
+  } else if (type == typeOf<DateTime>() || type == typeOf<DateTime?>()) {
+    value = _dateFactory;
+  } else if (type == typeOf<Uint8List>() || type == typeOf<Uint8List?>()) {
+    value = _blobFactory;
+  } else {
+    throw UnsupportedError("Unsupported type $type to read data from sqlite");
   }
 
   return value as ObjectFactory<T>;

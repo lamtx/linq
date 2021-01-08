@@ -10,7 +10,7 @@ class BinaryOperator {
     static const equal = BinaryOperator._("=");
     static const lessThan = BinaryOperator._("<");
     static const lessThanOrEqual = BinaryOperator._("<=");
-    static const greaterThan = BinaryOperator._(">=");
+    static const greaterThan = BinaryOperator._(">");
     static const greaterThanOrEqual = BinaryOperator._(">=");
     static const notEqual = BinaryOperator._("<>");
     static const and = BinaryOperator._("AND");

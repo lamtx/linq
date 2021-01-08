@@ -6,7 +6,7 @@ class SqlException implements Exception {
   @override
   String toString() => message;
 
-  static T noElement<T>() {
+  static Never noElement() {
     throw const SqlException("no element");
   }
 }

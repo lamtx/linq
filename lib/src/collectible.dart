@@ -73,7 +73,7 @@ class _Collectible<T extends Object> implements Collectible<T> {
       ..write(")");
     final whereClause = query.clause(context);
     if (whereClause.isNotEmpty) {
-      sb..write(" WHERE ")..write(whereClause);
+      sb..write(" ")..write(whereClause);
     }
     return sb.toString();
   }

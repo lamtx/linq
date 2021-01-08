@@ -48,6 +48,7 @@ class _Filterable<T extends Expressible> implements Filterable<T> {
     }
     var appendAnd = false;
     final sb = StringBuffer();
+    sb.write("WHERE ");
     for (final clause in whereClauses) {
       if (appendAnd) {
         sb.write(" AND ");
