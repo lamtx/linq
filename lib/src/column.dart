@@ -1,3 +1,4 @@
+import 'package:linq/src/literal.dart';
 import "package:sqlite/sqlite.dart";
 
 import "context.dart";
@@ -5,30 +6,28 @@ import "debug.dart";
 import "foreign_key.dart";
 import "literal_expression.dart";
 import "named_expression.dart";
-import "sqlite_type.dart";
 import "table.dart";
 
 class Column<T> implements NamedExpression<T> {
   Column(
     this.name,
-    this.owner,
-    SqliteType sqliteType, {
+    this.owner, {
     this.isPrimary = false,
     this.isNonnull = false,
-  })  : assert(name.isNotEmpty, "Name cannot be null"),
-        _sqliteType = sqliteType;
+  }) : assert(name.isNotEmpty, "Name cannot be null");
 
   @override
   final String name;
   final Table owner;
-  final SqliteType _sqliteType;
-
   final bool isPrimary;
   final bool isNonnull;
+
   T? _defaultValue;
   ForeignKey<T>? _foreignKey;
 
   ForeignKey<T>? get foreignKey => _foreignKey;
+
+  T? get defaultValue => _defaultValue;
 
   Column<T> references(Column<T> other) {
     _foreignKey = ForeignKey(other.owner, other);
@@ -41,7 +40,10 @@ class Column<T> implements NamedExpression<T> {
   }
 
   String definition() {
-    final sb = StringBuffer()..write(name)..write(" ")..write(_sqliteType.name);
+    final sb = StringBuffer()
+      ..write(name)
+      ..write(" ")
+      ..write(sqliteTypeOf<T>().name);
 
     if (isNonnull || isPrimary) {
       sb.write(" NOT NULL");
@@ -75,37 +77,5 @@ extension SqlOperatorOnColumn<T extends Column<Object>> on T {
       return true;
     }());
     db.execute(statement);
-  }
-}
-
-extension ColumnExt<T extends Object> on Column<T?> {
-  Column<T> primary() {
-    if (_foreignKey != null) {
-      throw StateError("primary should be called before the foreign key set.");
-    }
-    final instance = Column<T>(
-      name,
-      owner,
-      _sqliteType,
-      isPrimary: true,
-      isNonnull: isNonnull,
-    );
-    instance._defaultValue = _defaultValue;
-    return instance;
-  }
-
-  Column<T> nonnull() {
-    if (_foreignKey != null) {
-      throw StateError("nonnull should be called before the foreign key set.");
-    }
-    final instance = Column<T>(
-      name,
-      owner,
-      _sqliteType,
-      isPrimary: isPrimary,
-      isNonnull: true,
-    );
-    instance._defaultValue = _defaultValue;
-    return instance;
   }
 }

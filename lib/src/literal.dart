@@ -1,7 +1,27 @@
 import "dart:typed_data";
 
 import "package:ext/ext.dart";
+import 'package:linq/src/sqlite_type.dart';
 import "package:sqlite/sqlite.dart";
+
+SqliteType sqliteTypeOf<T>() {
+  final type = typeOf<T>();
+  if (type == typeOf<int>() || type == typeOf<int?>()) {
+    return SqliteType.integer;
+  } else if (type == typeOf<String>() || type == typeOf<String?>()) {
+    return SqliteType.text;
+  } else if (type == typeOf<double>() || type == typeOf<double?>()) {
+    return SqliteType.real;
+  } else if (type == typeOf<bool>() || type == typeOf<bool?>()) {
+    return SqliteType.integer;
+  } else if (type == typeOf<DateTime>() || type == typeOf<DateTime?>()) {
+    return SqliteType.integer;
+  } else if (type == typeOf<Uint8List>() || type == typeOf<Uint8List?>()) {
+    return SqliteType.blob;
+  } else {
+    throw UnsupportedError("Unsupported type $type to read data from sqlite");
+  }
+}
 
 Object? toSQLiteLiteral(Object? value) {
   assert(value == null ||

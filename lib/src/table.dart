@@ -11,7 +11,6 @@ import "expressible.dart";
 import "literal_expression.dart";
 import "selectable.dart";
 import "setter.dart";
-import "sqlite_type.dart";
 
 T _identity<T>(T e) => e;
 
@@ -25,25 +24,25 @@ class Table implements Selectable {
   final List<Column<void>> _columns = [];
 
   @protected
-  Column<int?> long(String name) => _register(name, SqliteType.integer);
+  Column<int?> long(String name) => _register(name);
 
   @protected
-  Column<double?> real(String name) => _register(name, SqliteType.real);
+  Column<double?> real(String name) => _register(name);
 
   @protected
-  Column<String?> text(String name) => _register(name, SqliteType.text);
+  Column<String?> text(String name) => _register(name);
 
   @protected
-  Column<DateTime?> date(String name) => _register(name, SqliteType.integer);
+  Column<DateTime?> date(String name) => _register(name);
 
   @protected
-  Column<bool?> boolean(String name) => _register(name, SqliteType.integer);
+  Column<bool?> boolean(String name) => _register(name);
 
   @protected
-  Column<Uint8List?> blob(String name) => _register(name, SqliteType.blob);
+  Column<Uint8List?> blob(String name) => _register(name);
 
-  Column<T> _register<T>(String name, SqliteType type) {
-    final column = Column<T>(name, this, type);
+  Column<T> _register<T>(String name) {
+    final column = Column<T>(name, this);
     _columns.add(column);
     return column;
   }
@@ -200,4 +199,46 @@ class _InternalForeignKey {
   final Table foreignTable;
   final List<Column<void>> thisKeys = <Column<void>>[];
   final List<Column<void>> foreignKeys = <Column<void>>[];
+}
+
+extension ColumnExt<T extends Object> on Column<T?> {
+  Column<T> primary() {
+    if (foreignKey != null) {
+      throw StateError("primary should be called before the foreign key set.");
+    }
+    final instance = Column<T>(
+      name,
+      owner,
+      isPrimary: true,
+      isNonnull: isNonnull,
+    );
+    if (defaultValue != null) {
+      instance.def(defaultValue!);
+    }
+    _replace(instance);
+    return instance;
+  }
+
+  Column<T> nonnull() {
+    if (foreignKey != null) {
+      throw StateError("nonnull should be called before the foreign key set.");
+    }
+    final instance = Column<T>(
+      name,
+      owner,
+      isPrimary: isPrimary,
+      isNonnull: true,
+    );
+    if (defaultValue != null) {
+      instance.def(defaultValue!);
+    }
+    _replace(instance);
+    return instance;
+  }
+
+  void _replace(Column newValue) {
+    final index = owner._columns.indexOf(this);
+    assert(index != -1, "Old value not found");
+    owner._columns[index] = newValue;
+  }
 }
