@@ -1,7 +1,7 @@
 import "context.dart";
 
 abstract class Expressible {
-    String clause(Context context);
+  String clause(Context context);
 
-    List<Object?> args();
+  List<Object?> args();
 }

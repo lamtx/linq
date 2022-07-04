@@ -131,7 +131,9 @@ class SqlContext implements Context {
         ..write(" = ?");
       bindArgs.addAll(LiteralExpression(exp.value).args());
     }
-    statement..write(" ")..write(whereClause);
+    statement
+      ..write(" ")
+      ..write(whereClause);
     bindArgs.addAll(args);
 
     assert(() {

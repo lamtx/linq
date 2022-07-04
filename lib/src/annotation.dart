@@ -1,9 +1,10 @@
 class _KotlinMethodMarker {
-    const _KotlinMethodMarker(this.whatType);
+  const _KotlinMethodMarker(this.whatType);
 
-    final String whatType;
+  final String whatType;
 }
 
 const Object implement = _KotlinMethodMarker("extension-method-implement");
 
-const Object overridableExtension = _KotlinMethodMarker("overridable-extension-method");
+const Object overridableExtension =
+    _KotlinMethodMarker("overridable-extension-method");

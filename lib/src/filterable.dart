@@ -54,7 +54,10 @@ class _Filterable<T extends Expressible> implements Filterable<T> {
         sb.write(" AND ");
       }
       appendAnd = true;
-      sb..write("(")..write(clause.clause(context))..write(")");
+      sb
+        ..write("(")
+        ..write(clause.clause(context))
+        ..write(")");
     }
     return sb.toString();
   }

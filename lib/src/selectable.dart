@@ -1,5 +1,5 @@
 import "expressible.dart";
 
 abstract class Selectable extends Expressible {
-    List<Expressible> allExpressible();
+  List<Expressible> allExpressible();
 }

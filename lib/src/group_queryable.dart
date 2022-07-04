@@ -20,9 +20,8 @@ class GroupQueryable<T extends Expressible, TKey extends Object>
     implements Queryable<Group<T, TKey>> {
   GroupQueryable(Queryable<T> base, TKey key)
       : _base = base,
-        _key = key ,
+        _key = key,
         _groupByClauses = collectExpressible(key);
-
 
   final Queryable<T> _base;
   final TKey _key;

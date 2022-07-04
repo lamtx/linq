@@ -78,7 +78,9 @@ class Table implements Selectable {
       } else {
         sb.write(",");
       }
-      sb..write("\r\n")..write(column.definition());
+      sb
+        ..write("\r\n")
+        ..write(column.definition());
     }
     final primaries = _columns.where((it) => it.isPrimary);
 
