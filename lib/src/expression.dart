@@ -9,9 +9,13 @@ import "literal_expression.dart";
 abstract class Expression<T> implements Expressible {}
 
 extension ExpressionOperator<T> on Expression<T> {
-  Expression<bool> eq(T? value) => _binary(BinaryOperator.equal, value);
+  Expression<bool> eq(T? value) => value == null
+      ? _binary(BinaryOperator.$is, null)
+      : _binary(BinaryOperator.equal, value);
 
-  Expression<bool> ne(T? value) => _binary(BinaryOperator.notEqual, value);
+  Expression<bool> ne(T? value) => value == null
+      ? _binary(BinaryOperator.isNot, null)
+      : _binary(BinaryOperator.notEqual, value);
 
   Expression<bool> lt(T value) => _binary(BinaryOperator.lessThan, value);
 

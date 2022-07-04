@@ -8,7 +8,7 @@ class LiteralExpression<T> implements Expression<T> {
   final Object? value;
 
   @override
-  List<Object?> args() => [value];
+  List<Object?> args() => value == null ? const [] : [value];
 
   @override
   String clause(Context context) => value == null ? "NULL" : "?";

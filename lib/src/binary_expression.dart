@@ -17,6 +17,8 @@ class BinaryOperator {
   static const or = BinaryOperator._("OR");
   static const like = BinaryOperator._("LIKE");
   static const $in = BinaryOperator._("IN");
+  static const $is = BinaryOperator._("IS");
+  static const isNot = BinaryOperator._("IS NOT");
 }
 
 class BinaryExpression<T> implements Expression<T> {
