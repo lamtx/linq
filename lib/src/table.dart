@@ -8,7 +8,7 @@ import "column.dart";
 import "context.dart";
 import "debug.dart";
 import "expressible.dart";
-import "literal_expression.dart";
+import 'literal.dart';
 import "selectable.dart";
 import "setter.dart";
 
@@ -182,7 +182,7 @@ extension SqlOperatorOnTable<T extends Table> on T {
 
     final args = <Object?>[];
     for (final e in columns) {
-      args.addAll(LiteralExpression(e.value).args());
+      args.add(toSQLiteLiteral(e.value));
     }
     assert(() {
       if (enableLog) {
