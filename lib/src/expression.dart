@@ -13,9 +13,15 @@ extension ExpressionOperator<T> on Expression<T> {
       ? _binary(BinaryOperator.$is, null)
       : _binary(BinaryOperator.equal, value);
 
+  Expression<bool> eqOther(Expression<T> other) =>
+      _binaryOther(BinaryOperator.equal, other);
+
   Expression<bool> ne(T? value) => value == null
       ? _binary(BinaryOperator.isNot, null)
       : _binary(BinaryOperator.notEqual, value);
+
+  Expression<bool> neOther(Expression<T> other) =>
+      _binaryOther(BinaryOperator.notEqual, other);
 
   Expression<bool> lt(T value) => _binary(BinaryOperator.lessThan, value);
 
@@ -54,7 +60,7 @@ extension ExpressionOperator<T> on Expression<T> {
   Expression<bool> _binary(BinaryOperator op, T? value) =>
       BinaryExpression(op, this, LiteralExpression(value));
 
-  Expression<bool> _binaryEx(BinaryOperator op, Expression<T?> other) =>
+  Expression<bool> _binaryOther(BinaryOperator op, Expression<T?> other) =>
       BinaryExpression(op, this, other);
 }
 
@@ -67,7 +73,7 @@ extension BoolExpressionOperator on Expression<bool> {
   }
 
   Expression<bool> operator |(Expression<bool> other) {
-    return _binaryEx(BinaryOperator.or, other);
+    return _binaryOther(BinaryOperator.or, other);
   }
 }
 
