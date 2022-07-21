@@ -1,7 +1,8 @@
 import 'package:sqlite/sqlite.dart';
 
-import '../linq.dart';
+import 'column.dart';
 import 'debug.dart';
+import 'table.dart';
 
 extension SqlOperatorOnDatabase on Database {
   void create(Table table) {

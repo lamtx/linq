@@ -1,7 +1,7 @@
-import "dart:typed_data";
+import 'dart:typed_data';
 
 import "package:ext/ext.dart";
-import "package:flutter/foundation.dart";
+import 'package:meta/meta.dart';
 import "package:sqlite/sqlite.dart";
 
 import "column.dart";

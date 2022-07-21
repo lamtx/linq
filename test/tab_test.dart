@@ -1,8 +1,6 @@
 import "dart:core";
 
-import "package:flutter_test/flutter_test.dart";
 import "package:linq/linq.dart";
-import "package:sqlite/sqlite.dart";
 
 class Category extends Table {
   Category() : super("Category") {
@@ -34,28 +32,7 @@ class Customer extends Table {
 
 final Customer customer = Customer();
 
-void main() {
-  test("create table", () {
-    final db = Database("customers2.db");
-    final context = SqlContext(db);
-
-//        insert<Customer>(customer, db, (e) =>
-//        [
-//            e.name << "Lam 3",
-//            e.grade << 5.2,
-//            e.vip << false
-//        ]);
-    final l = from(customer).selectAll().collect(
-        context,
-        (e) => C(
-              name: e.get((e) => e.name),
-              grade: e.get((e) => e.grade),
-              vip: e.get((e) => e.vip),
-            ));
-
-    print(l);
-  });
-}
+void main() {}
 
 class C {
   C({required this.name, required this.grade, required this.vip});

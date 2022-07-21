@@ -4,20 +4,11 @@ publish_to: 'none'
 version: 1.0.0
 
 environment:
-  sdk: ^2.12.0-0
+  sdk: ^2.17.0
 
 dependencies:
-  flutter:
-    sdk: flutter
-  sqlite:
-    git: https://github.com/lamtx/sqlite.git
-  #    path: ../sqlite
   ext:
     git: https://github.com/lamtx/ext.git
-#    path: ../ext
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
-flutter:
+  meta: any
+  sqlite:
+    git: https://github.com/lamtx/sqlite.git
