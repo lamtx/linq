@@ -2,13 +2,14 @@ import "context.dart";
 import "expression.dart";
 import "named_expressible.dart";
 
-abstract class NamedExpression<T> implements Expression<T>, NamedExpressible {
+abstract interface class NamedExpression<T>
+    implements Expression<T>, NamedExpressible {
   factory NamedExpression(String name, [Expression<T>? base]) {
     return _NamedExpressionImpl(name, base);
   }
 }
 
-class _NamedExpressionImpl<T> implements NamedExpression<T> {
+final class _NamedExpressionImpl<T> implements NamedExpression<T> {
   _NamedExpressionImpl(this.name, [Expression<T>? base]) : _base = base;
 
   final Expression<T>? _base;

@@ -2,26 +2,26 @@ import "context.dart";
 import "expressible.dart";
 import "expression.dart";
 
-class BinaryOperator {
-  const BinaryOperator._(String op) : _symbol = op;
+enum BinaryOperator {
+  equal("="),
+  lessThan("<"),
+  lessThanOrEqual("<="),
+  greaterThan(">"),
+  greaterThanOrEqual(">="),
+  notEqual("<>"),
+  and("AND"),
+  or("OR"),
+  like("LIKE"),
+  $in("IN"),
+  $is("IS"),
+  isNot("IS NOT");
+
+  const BinaryOperator(this._symbol);
 
   final String _symbol;
-
-  static const equal = BinaryOperator._("=");
-  static const lessThan = BinaryOperator._("<");
-  static const lessThanOrEqual = BinaryOperator._("<=");
-  static const greaterThan = BinaryOperator._(">");
-  static const greaterThanOrEqual = BinaryOperator._(">=");
-  static const notEqual = BinaryOperator._("<>");
-  static const and = BinaryOperator._("AND");
-  static const or = BinaryOperator._("OR");
-  static const like = BinaryOperator._("LIKE");
-  static const $in = BinaryOperator._("IN");
-  static const $is = BinaryOperator._("IS");
-  static const isNot = BinaryOperator._("IS NOT");
 }
 
-class BinaryExpression<T> implements Expression<T> {
+final class BinaryExpression<T> implements Expression<T> {
   const BinaryExpression(BinaryOperator op, Expressible left, Expressible right)
       : _op = op,
         _left = left,

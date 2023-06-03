@@ -1,4 +1,4 @@
-class SqlException implements Exception {
+base class SqlException implements Exception {
   const SqlException(this.message);
 
   final String message;

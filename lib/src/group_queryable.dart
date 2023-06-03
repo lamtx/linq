@@ -3,7 +3,7 @@ import 'context.dart';
 import 'expressible.dart';
 import 'queryable.dart';
 
-class Group<TSource extends Expressible, TKey> implements Expressible {
+final class Group<TSource extends Expressible, TKey> implements Expressible {
   Group(this.source, this.key);
 
   final TSource source;
@@ -16,7 +16,7 @@ class Group<TSource extends Expressible, TKey> implements Expressible {
   String clause(Context context) => source.clause(context);
 }
 
-class GroupQueryable<T extends Expressible, TKey extends Object>
+final class GroupQueryable<T extends Expressible, TKey extends Object>
     implements Queryable<Group<T, TKey>> {
   GroupQueryable(Queryable<T> base, TKey key)
       : _base = base,

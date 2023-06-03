@@ -5,7 +5,7 @@ import 'group_queryable.dart';
 import "limited_queryable.dart";
 import "ordered_queryable.dart";
 
-abstract class Queryable<T> extends Expression<T> {
+abstract interface class Queryable<T> implements Expression<T> {
   T get source;
 }
 

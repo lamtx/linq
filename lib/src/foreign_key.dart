@@ -2,7 +2,7 @@ import "column.dart";
 import "context.dart";
 import "table.dart";
 
-class ForeignKey<T> {
+final class ForeignKey<T> {
   const ForeignKey(this.otherTable, this.otherColumn);
 
   final Table otherTable;

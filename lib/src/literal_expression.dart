@@ -2,7 +2,7 @@ import "context.dart";
 import "expression.dart";
 import "literal.dart";
 
-class LiteralExpression<T> implements Expression<T> {
+final class LiteralExpression<T> implements Expression<T> {
   LiteralExpression(T obj) : value = toSQLiteLiteral(obj);
 
   final Object? value;

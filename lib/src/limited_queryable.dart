@@ -2,7 +2,7 @@ import "context.dart";
 import "expressible.dart";
 import "queryable.dart";
 
-class LimitedQueryable<T extends Expressible> implements Queryable<T> {
+final class LimitedQueryable<T extends Expressible> implements Queryable<T> {
   LimitedQueryable(Queryable<T> base, int limit, int offset)
       : _base = base,
         _limit = limit,

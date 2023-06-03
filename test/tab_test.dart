@@ -2,7 +2,7 @@ import "dart:core";
 
 import "package:linq/linq.dart";
 
-class Category extends Table {
+final class Category extends Table {
   Category() : super("Category") {
     id = long("id").primary();
     name = text("name");
@@ -14,8 +14,24 @@ class Category extends Table {
 
 final Category category = Category();
 
-class Customer extends Table {
-  Customer() : super("Customer") {
+class Customer {
+  final int id;
+  final String? name;
+  final int? categoryId;
+  final double? grade;
+  final bool? vip;
+
+  Customer({
+    required this.id,
+    this.name,
+    this.categoryId,
+    this.grade,
+    this.vip,
+  });
+}
+
+final class Customers extends Table {
+  Customers() : super("Customers") {
     name = text("name");
     id = long("id").primary();
     categoryId = long("categoryId").references(category.id);
@@ -30,17 +46,11 @@ class Customer extends Table {
   late Column<bool?> vip;
 }
 
-final Customer customer = Customer();
+final Customers customer = Customers();
 
-void main() {}
-
-class C {
-  C({required this.name, required this.grade, required this.vip});
-
-  final String? name;
-  final double? grade;
-  final bool? vip;
-
-  @override
-  String toString() => "(name: $name, grade: $grade, vip: $vip)";
+void main() {
+  final Customer Function(Selector<Customers> get) collector =
+      (get) => Customer(
+            id: get((e) => e.id),
+          );
 }

@@ -1,5 +1,5 @@
 export "src/collectible.dart" show Collectible, SqlOperatorOnCollectible;
-export "src/collector.dart" show Collector;
+export "src/selector.dart" show Selector;
 export "src/column.dart";
 export "src/context.dart";
 export "src/database_operators.dart";

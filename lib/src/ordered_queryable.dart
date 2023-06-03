@@ -2,7 +2,7 @@ import "context.dart";
 import "expressible.dart";
 import "queryable.dart";
 
-class OrderedQueryable<T extends Expressible> implements Queryable<T> {
+final class OrderedQueryable<T extends Expressible> implements Queryable<T> {
   OrderedQueryable(Queryable<T> base, List<Expressible> orderBy)
       : _orderBy = orderBy,
         _base = base;

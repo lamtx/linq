@@ -10,7 +10,7 @@ import "selectable.dart";
 import "setter.dart";
 import 'sql_context.dart';
 
-abstract class Filterable<T extends Expressible> implements Queryable<T> {
+abstract interface class Filterable<T extends Expressible> implements Queryable<T> {
   factory Filterable(T source,
           [List<Expression<bool>> whereClauses = const []]) =>
       _Filterable(source, whereClauses);
@@ -20,7 +20,7 @@ abstract class Filterable<T extends Expressible> implements Queryable<T> {
 
 Filterable<T> from<T extends Selectable>(T source) => Filterable(source);
 
-class _Filterable<T extends Expressible> implements Filterable<T> {
+final class _Filterable<T extends Expressible> implements Filterable<T> {
   _Filterable(this.source, [this.whereClauses = const []]);
 
   final List<Expression<bool>> whereClauses;

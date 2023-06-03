@@ -1,16 +1,21 @@
+import "package:ext/ext.dart";
 import "package:sqlite/sqlite.dart";
 
 import "annotation.dart";
 import "collectible.dart";
-import "collector.dart";
 import "context.dart";
 import "debug.dart";
 import "expressible.dart";
 import "filterable.dart";
+import "literal.dart";
 import "literal_expression.dart";
+import "named_expression.dart";
 import "selectable.dart";
+import "selector.dart";
 import "setter.dart";
 import "table.dart";
+
+typedef Collector<T, R> = R Function(Selector<T> get);
 
 class SqlContext implements Context {
   SqlContext(this.database);
@@ -50,15 +55,15 @@ class SqlContext implements Context {
   }
 
   List<R> _toList<T, R>(
-      Result result, T source, R Function(Collector<T>) creator) {
+      Result result, T source, R Function(Selector<T>) collector) {
     final list = <R>[];
-    final collector = CollectorImpl(source);
+    final selector = _Selector(source);
 
     try {
       while (result.moveNext()) {
-        collector.set(result.current);
-        list.add(creator(collector));
-        collector.allSet();
+        selector.set(result.current);
+        list.add(collector(selector));
+        selector.allSet();
       }
     } finally {
       result.close();
@@ -66,12 +71,11 @@ class SqlContext implements Context {
     return list;
   }
 
-  R? _firstOrNull<T, R>(
-      Result result, T source, R? Function(Collector<T>) creator) {
+  R? _firstOrNull<T, R>(Result result, T source, Collector<T, R?> collector) {
     try {
       if (result.moveNext()) {
-        final collector = CollectorImpl(source)..set(result.current);
-        return creator(collector);
+        final selector = _Selector(source)..set(result.current);
+        return collector(selector);
       } else {
         return null;
       }
@@ -90,16 +94,16 @@ class SqlContext implements Context {
 
   @implement
   List<R> collect<T extends Object, R>(
-      Collectible<T> receiver, R Function(Collector<T>) creator) {
+      Collectible<T> receiver, Collector<T, R> collector) {
     final result = _fetch(receiver, database);
-    return _toList(result, receiver.source, creator);
+    return _toList(result, receiver.source, collector);
   }
 
   @implement
   R? firstOrNull<T extends Object, R>(
-      Collectible<T> receiver, R? Function(Collector<T>) creator) {
+      Collectible<T> receiver, Collector<T, R?> collector) {
     final result = _fetch(receiver, database);
-    return _firstOrNull(result, receiver.source, creator);
+    return _firstOrNull(result, receiver.source, collector);
   }
 
   @implement
@@ -171,4 +175,56 @@ class SqlContext implements Context {
     final result = _fetch(receiver, database);
     return _exist(result);
   }
+}
+
+final class _Selector<T> implements Selector<T> {
+  _Selector(T source) : _source = source;
+
+  final T _source;
+
+  Row? _current;
+  var _index = 0;
+  var _prepared = false;
+  final _cache = <_Column<Object?>>[];
+
+  void allSet() {
+    _current = null;
+    _index = 0;
+    _prepared = true;
+  }
+
+  void set(Row row) {
+    _current = row;
+    _index = 0;
+  }
+
+  @override
+  R call<R>(NamedExpression<R> Function(T e) fieldName) {
+    final namedColumn = fieldName(_source);
+    final field = namedColumn.name;
+    final current = _current ?? error("set must be called before get");
+
+    if (_prepared) {
+      final column = _cache[_index];
+      _index += 1;
+      assert(column.name == field, "Column mismatch");
+      return column.objectFactory(current, column.index) as R;
+    }
+
+    final columnIndex = current.getColumnIndex(field) ??
+        error(
+          "Index out of bound. It usually happens when the number of field reading for each time are different",
+        );
+    final factory = findObjectFactory<R>();
+    _cache.add(_Column(columnIndex, field, factory));
+    return factory(current, columnIndex);
+  }
+}
+
+class _Column<T> {
+  _Column(this.index, this.name, this.objectFactory);
+
+  final int index;
+  final String name;
+  final ObjectFactory<T> objectFactory;
 }

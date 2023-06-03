@@ -8,7 +8,7 @@ import "literal_expression.dart";
 import "named_expression.dart";
 import "table.dart";
 
-class Column<T> implements NamedExpression<T> {
+final class Column<T> implements NamedExpression<T> {
   Column(
     this.name,
     this.owner, {

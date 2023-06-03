@@ -1,4 +1,4 @@
-import "collector.dart";
+import "selector.dart";
 import "context.dart";
 import "expressible.dart";
 import "lack_feature_error.dart";
@@ -6,7 +6,7 @@ import "selectable.dart";
 import "sql_context.dart";
 import "sql_exception.dart";
 
-abstract class Collectible<T extends Object> implements Selectable {
+abstract interface class Collectible<T extends Object> implements Selectable {
   factory Collectible({
     required T source,
     required Expressible baseSource,
@@ -25,19 +25,19 @@ abstract class Collectible<T extends Object> implements Selectable {
 }
 
 extension SqlOperatorOnCollectible<T extends Object> on Collectible<T> {
-  List<R> collect<R>(SqlContext context, R Function(Collector<T>) collector) =>
+  List<R> collect<R>(SqlContext context, R Function(Selector<T>) collector) =>
       context.collect(this, collector);
 
-  R? firstOrNull<R>(SqlContext context, R? Function(Collector<T>) collector) =>
+  R? firstOrNull<R>(SqlContext context, R? Function(Selector<T>) collector) =>
       context.firstOrNull(this, collector);
 
-  R first<R>(SqlContext context, R Function(Collector<T>) collector) =>
+  R first<R>(SqlContext context, R Function(Selector<T>) collector) =>
       context.firstOrNull(this, collector) ?? SqlException.noElement();
 
   bool exists(SqlContext context) => context.exists(this);
 }
 
-class _Collectible<T extends Object> implements Collectible<T> {
+final class _Collectible<T extends Object> implements Collectible<T> {
   _Collectible({
     required this.source,
     required this.baseSource,

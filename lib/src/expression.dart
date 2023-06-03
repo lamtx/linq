@@ -6,7 +6,7 @@ import "expressible.dart";
 import "literal.dart";
 import "literal_expression.dart";
 
-abstract class Expression<T> implements Expressible {}
+abstract interface class Expression<T> implements Expressible {}
 
 extension ExpressionOperator<T> on Expression<T> {
   Expression<bool> eq(T? value) => value == null
@@ -93,7 +93,7 @@ extension StringExpressionOperator on Expression<String?> {
       func<String>("group_concat", separator);
 }
 
-class _PostfixExpression<T> implements Expression<T> {
+final class _PostfixExpression<T> implements Expression<T> {
   _PostfixExpression(this.functionName, this.arg);
 
   final String functionName;
@@ -106,7 +106,7 @@ class _PostfixExpression<T> implements Expression<T> {
   String clause(Context context) => "${arg.clause(context)} $functionName";
 }
 
-class _FunctionExpression<T> implements Expression<T> {
+final class _FunctionExpression<T> implements Expression<T> {
   _FunctionExpression(this.func, this.arg) : assert(arg.isNotEmpty);
 
   final String func;
@@ -133,7 +133,7 @@ class _FunctionExpression<T> implements Expression<T> {
   }
 }
 
-class _ContainExpression implements Expression<bool> {
+final class _ContainExpression implements Expression<bool> {
   _ContainExpression(this.arg);
 
   final Expression<String?> arg;
@@ -147,7 +147,7 @@ class _ContainExpression implements Expression<bool> {
   }
 }
 
-class _EndsWithExpression implements Expression<bool> {
+final class _EndsWithExpression implements Expression<bool> {
   _EndsWithExpression(this.arg);
 
   final Expression<String?> arg;
@@ -161,7 +161,7 @@ class _EndsWithExpression implements Expression<bool> {
   }
 }
 
-class _StartsWithExpression implements Expression<bool> {
+final class _StartsWithExpression implements Expression<bool> {
   _StartsWithExpression(this.arg);
 
   final Expression<String?> arg;
@@ -175,7 +175,7 @@ class _StartsWithExpression implements Expression<bool> {
   }
 }
 
-class _CollectionExpression implements Expressible {
+final class _CollectionExpression implements Expressible {
   _CollectionExpression(this.items);
 
   final List<Object?> items;

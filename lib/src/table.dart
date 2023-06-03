@@ -14,7 +14,7 @@ import "setter.dart";
 
 T _identity<T>(T e) => e;
 
-class Table implements Selectable {
+base class Table implements Selectable {
   Table(String name)
       : assert(name.isNotEmpty, "Table name cannot be empty"),
         _tableName = name;

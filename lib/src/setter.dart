@@ -1,7 +1,7 @@
 import "column.dart";
 import 'table.dart';
 
-class Setter<T> {
+final class Setter<T> {
   Setter(this.column, this.value) {
     if (column.isNonnull && value == null) {
       throw InsertNullValueException(column);

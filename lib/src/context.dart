@@ -2,7 +2,7 @@ import "annotation.dart";
 import "filterable.dart";
 import "selectable.dart";
 
-abstract class Context {
+abstract interface class Context {
   Filterable<T> from<T extends Selectable>(T source);
 
   @overridableExtension
@@ -13,7 +13,7 @@ abstract class Context {
   static const Context empty = _EmptyContext();
 }
 
-class _EmptyContext implements Context {
+final class _EmptyContext implements Context {
   const _EmptyContext();
 
   @override

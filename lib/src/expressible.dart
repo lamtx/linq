@@ -1,6 +1,6 @@
 import "context.dart";
 
-abstract class Expressible {
+abstract interface class Expressible {
   String clause(Context context);
 
   List<Object?> args();
