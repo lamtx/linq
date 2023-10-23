@@ -11,6 +11,7 @@ import "expressible.dart";
 import 'literal.dart';
 import "selectable.dart";
 import "setter.dart";
+import "sqlite_type.dart";
 
 T _identity<T>(T e) => e;
 
@@ -24,25 +25,25 @@ base class Table implements Selectable {
   final List<Column<void>> _columns = [];
 
   @protected
-  Column<int?> long(String name) => _register(name);
+  Column<int?> long(String name) => _register(name, SqliteType.integer);
 
   @protected
-  Column<double?> real(String name) => _register(name);
+  Column<double?> real(String name) => _register(name, SqliteType.real);
 
   @protected
-  Column<String?> text(String name) => _register(name);
+  Column<String?> text(String name) => _register(name, SqliteType.text);
 
   @protected
-  Column<DateTime?> date(String name) => _register(name);
+  Column<DateTime?> date(String name) => _register(name, SqliteType.integer);
 
   @protected
-  Column<bool?> boolean(String name) => _register(name);
+  Column<bool?> boolean(String name) => _register(name, SqliteType.integer);
 
   @protected
-  Column<Uint8List?> blob(String name) => _register(name);
+  Column<Uint8List?> blob(String name) => _register(name, SqliteType.blob);
 
-  Column<T> _register<T>(String name) {
-    final column = Column<T>(name, this);
+  Column<T> _register<T>(String name, SqliteType sqliteType) {
+    final column = Column<T>(name, this, sqliteType);
     _columns.add(column);
     return column;
   }
@@ -166,7 +167,8 @@ class InsertNullValueException extends StateError {
 extension SqlOperatorOnTable<T extends Table> on T {
   int insert(Database db, List<Setter<Object?>> Function(T table) setters) {
     final columns = setters(this);
-    final nonnullColumns = _columns.where((x) => x.isNonnull).toList();
+    final nonnullColumns =
+        _columns.where((x) => x.isNonnull && !x.isRowIdAlias).toList();
 
     for (final column in nonnullColumns) {
       if (!columns.any((e) => identical(e.column, column))) {
@@ -211,6 +213,7 @@ extension ColumnExt<T extends Object> on Column<T?> {
     final instance = Column<T>(
       name,
       owner,
+      sqliteType,
       isPrimary: true,
       isNonnull: isNonnull,
     );
@@ -228,6 +231,7 @@ extension ColumnExt<T extends Object> on Column<T?> {
     final instance = Column<T>(
       name,
       owner,
+      sqliteType,
       isPrimary: isPrimary,
       isNonnull: true,
     );
@@ -242,5 +246,13 @@ extension ColumnExt<T extends Object> on Column<T?> {
     final index = owner._columns.indexOf(this);
     assert(index != -1, "Old value not found");
     owner._columns[index] = newValue;
+  }
+}
+
+extension on Column {
+  /// In SQLite, a column with type INTEGER PRIMARY KEY is an alias for the ROWID
+  /// (except in WITHOUT ROWID tables) which is always a 64-bit signed integer.
+  bool get isRowIdAlias {
+    return sqliteType == SqliteType.integer && isPrimary;
   }
 }

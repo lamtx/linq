@@ -1,4 +1,4 @@
-import 'package:linq/src/literal.dart';
+import "package:linq/src/sqlite_type.dart";
 import "package:sqlite/sqlite.dart";
 
 import "context.dart";
@@ -11,7 +11,8 @@ import "table.dart";
 final class Column<T> implements NamedExpression<T> {
   Column(
     this.name,
-    this.owner, {
+    this.owner,
+    this.sqliteType, {
     this.isPrimary = false,
     this.isNonnull = false,
   }) : assert(name.isNotEmpty, "Name cannot be null");
@@ -22,7 +23,9 @@ final class Column<T> implements NamedExpression<T> {
   final bool isPrimary;
   final bool isNonnull;
 
+  final SqliteType sqliteType;
   T? _defaultValue;
+
   ForeignKey<T>? _foreignKey;
 
   ForeignKey<T>? get foreignKey => _foreignKey;
@@ -43,7 +46,7 @@ final class Column<T> implements NamedExpression<T> {
     final sb = StringBuffer()
       ..write(name)
       ..write(" ")
-      ..write(sqliteTypeOf<T>().name);
+      ..write(sqliteType.name);
 
     if (isNonnull || isPrimary) {
       sb.write(" NOT NULL");
