@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import "package:ext/ext.dart";
+import "package:collection/collection.dart";
 import 'package:meta/meta.dart';
 import "package:sqlite/sqlite.dart";
 
@@ -136,7 +136,7 @@ base class Table implements Selectable {
     for (final col in foreignColumn) {
       final name = col.foreignKey!.otherTableName;
       var key = internalForeignKeys
-          .firstOrNull((x) => x.foreignTable._tableName == name);
+          .firstWhereOrNull((x) => x.foreignTable._tableName == name);
       if (key == null) {
         final foreignTable = col.foreignKey!.otherTable;
         key = _InternalForeignKey(foreignTable);
