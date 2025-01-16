@@ -1,3 +1,4 @@
+import "dart:ffi";
 import 'dart:typed_data';
 
 import "package:collection/collection.dart";
@@ -194,6 +195,44 @@ extension SqlOperatorOnTable<T extends Table> on T {
       return true;
     }());
     return db.execute(statement, args, true);
+  }
+
+  void insertMany(
+    Database db,
+    Iterable<List<Setter<Object?>>> Function(T table) setters,
+  ) {
+    final table = setters(this);
+    final nonnullColumns =
+        _columns.where((x) => x.isNonnull && !x.isRowIdAlias).toList();
+
+    Pointer<Statement>? statement;
+    try {
+      for (final columns in table) {
+        // for (final column in nonnullColumns) {
+        //   if (!columns.any((e) => identical(e.column, column))) {
+        //     throw LackNonnullColumnError(column);
+        //   }
+        // }
+
+        if (statement == null) {
+          final columnStatement =
+              columns.map((x) => x.column.clause(Context.empty)).join(", ");
+          final valuesStatement = columns.map((_) => "?").join(", ");
+          final statementStr =
+              "INSERT INTO $_tableName ($columnStatement) VALUES($valuesStatement)";
+          statement = db.prepare(statementStr);
+        }
+        final args = <Object?>[];
+        for (final e in columns) {
+          args.add(toSQLiteLiteral(e.value));
+        }
+        db.executeStatement(statement, args, false);
+      }
+    } finally {
+      if (statement != null) {
+        db.freeStatement(statement);
+      }
+    }
   }
 }
 
